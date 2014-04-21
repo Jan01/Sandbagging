@@ -1,8 +1,10 @@
 Sandbagging
 ===========
 
-[Sandbagging](http://en.wikipedia.org/wiki/Sandbagging) has many meanings and now it has
-one more: A lightweight .Net Xml documentation to Html converter.
+[Sandbagging](http://en.wikipedia.org/wiki/Sandbagging) means hiding the strength, skill or difficulty
+of something or someone early in an engagement.
+
+It is also a lightweight alternative to [Sandcastle](http://shfb.codeplex.com), more specifically: a .Net Xml documentation to Html converter.
 
 You can obtain an Xml documentation file by setting the XML documentation path under build options.
 
