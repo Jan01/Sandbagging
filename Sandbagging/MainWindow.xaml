@@ -1,13 +1,28 @@
 ﻿<Window x:Class="Sandbagging.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525">
+        AllowDrop="True"
+        Title="Sandbagging - Xml documentation to Html converter"
+        ToolTipService.ToolTip="Drag XML Docuemntation files to convert here (check your VS build project options to see where they are)"
+        PreviewDragEnter="OnDragOver"
+        PreviewDragOver="OnDragOver"
+        PreviewDrop="InputFileDrop"
+        Height="600"
+        Width="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TextBox x:Name="LogTextBox"/>
-        <Button Grid.Row="1" Content="Generate HTML" Click="Button_Click"/>
+        <!--<ToolBar>
+            <Button Content="Website"
+                    Click="Website_Click" />
+        </ToolBar>-->
+        <RichTextBox x:Name="LogTextBox"
+                     Grid.Row="1"
+                     IsReadOnly="True"
+                     IsDocumentEnabled="True"
+                     HorizontalScrollBarVisibility="Auto"
+                     VerticalScrollBarVisibility="Auto" />
     </Grid>
 </Window>
