@@ -11,9 +11,22 @@ namespace Sandbagging
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
+    /// <c>MainWindow</c> is the constructor
+    /// <code>a == b + c; // test</code>
+    /// <example>
+    /// 2 == 1 + 1;
+    /// 3 == 1 + 2;
+    /// 4 == 2 + 2;
+    /// </example>
     /// </summary>
     public partial class MainWindow : Window
     {
+        /// <summary>
+        /// <para>
+        /// This is a paragraph
+        /// </para>
+        /// <exception cref="System.Exception">Thrown when something bad happens</exception>
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -30,8 +43,24 @@ namespace Sandbagging
             AddLink("https://github.com/Jan01/Sandbagging", "Sandbagging");
             AddLink("http://www.helpndoc.com", "HelpNDoc");
         }
+        /// <summary>
+        /// Creates a new array of arbitrary type <typeparamref name="T"/> Just added this to check if the tag is processed correctly
+        /// </summary>
+        /// <typeparam name="T">The element type of the array</typeparam>
+        public static T[] mkArray<T>(int n)
+        {
+            return new T[n];
+        }
         private Dictionary<string, DocMember> members;
-        private void LoadDoc(string fileName)
+        /// <summary>
+        /// The <paramref name="fileName"/> parameter is the XML Document file to be loaded.
+        /// </summary>
+        /// <param name="fileName">The XML Document file</param>
+        /// <permission cref="System.Security.PermissionSet">Everyone can access this method</permission>
+        /// <remarks>The XML document can be obtained via the Visual Studio project properties/build tab</remarks>
+        /// <see cref="DocMember"/>
+        /// <seealso cref="DocContent"/>
+        public void LoadDoc(string fileName)
         {
             XElement xml = XElement.Load(fileName);
             foreach (XElement memberNode in xml.Descendants("member"))
@@ -45,6 +74,7 @@ namespace Sandbagging
                         docMember.DocType = DocTypeEnum.Type;
                         break;
                     case "P":
+                    case "F":
                         docMember.DocType = DocTypeEnum.Property;
                         break;
                     case "M":
@@ -54,7 +84,11 @@ namespace Sandbagging
                             docMember.DocType = DocTypeEnum.Member;
                         break;
                     default:
-                        // ToDo: warning
+                        // ToDo: 
+                        // N = namespace
+                        // F = field
+                        // E = Event
+                        // ! = Error
                         docMember.DocType = DocTypeEnum.Member;
                         break;
                 }
@@ -465,11 +499,23 @@ h1 {
             return null;
         }
     }
+    /// <summary>
+    /// Plain text
+    /// </summary>
     public class DocText : DocContent
     {
+        /// <summary>
+        /// Plain text as opposed to for example <see cref="DocList"/>
+        /// </summary>
+        /// <value>
+        /// The Text property has no internal value, but I want to test the value tag
+        /// </value>
         public string Text { get; set; }
     }
     public enum ListTypeEnum { Bullet, Number, Table }
+    /// <summary>
+    /// Represents lists and tables
+    /// </summary>
     public class DocList : DocContent
     {
         public ListTypeEnum ListType { get; set; }
