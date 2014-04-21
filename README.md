@@ -11,6 +11,6 @@ The interface is simple: just drag and drop the XML Documentation file on the GU
 a temp output dir with a html file for each class and an index.html.
 
 Decided to use [HelpNDoc](http://www.helpndoc.com/) as a backend so I don't have to worry about writing
-a search engine. HelpNDoc is a commercial product, but is free for non commercial use.
+a search engine. HelpNDoc is a commercial product, but is free for personal use.
 
 ![Alt text](/Images/DocNet.png "Screenshot Html output")
