@@ -137,6 +137,8 @@ h1 {
   color: #FFFFFF;
 }";
                     body.Add(new XElement("h1", qualifiedTypeName));
+                    DocContent.AddToXml(body, member.Summary);
+
                     AddChildren(body, DocTypeEnum.Constructor, member, "Constructors");
                     AddChildren(body, DocTypeEnum.Property, member, "Properties");
                     AddChildren(body, DocTypeEnum.Member, member, "Methods");
@@ -197,45 +199,7 @@ h1 {
                     tr.Add(new XElement("td", childMember.Name));
                     XElement td = new XElement("td");
                     tr.Add(td);
-                    foreach (DocContent docContent in childMember.Summary)
-                    {
-                        if (docContent is DocText)
-                            td.Add(((DocText)docContent).Text);
-                        else if (docContent is DocList)
-                        {
-                            DocList docList = (DocList)docContent;
-                            if (docList.ListType == ListTypeEnum.Table)
-                            {
-                                // ToDo
-                                table = new XElement("table");
-                                td.Add(table);
-                                tr = new XElement("tr");
-                                table.Add(tr);
-                                tr.Add(new XElement("th", docList.Header.Term));
-                                tr.Add(new XElement("th", docList.Header.Description));
-                                foreach (DocListItem item in docList.Items)
-                                {
-                                    tr = new XElement("tr");
-                                    table.Add(tr);
-                                    table.Add(new XElement("td", item.Term));
-                                    table.Add(new XElement("td", item.Description));
-                                }
-                            }
-                            else
-                            {
-                                XElement list;
-                                if (docList.ListType == ListTypeEnum.Number)
-                                    list = new XElement("ol");
-                                else
-                                    list = new XElement("ul");
-                                td.Add(list);
-                                foreach (DocListItem item in docList.Items)
-                                {
-                                    list.Add(new XElement("li", item.Description));
-                                }
-                            }
-                        }
-                    }
+                    DocContent.AddToXml(td, childMember.Summary);
                 }
             }
         }
@@ -264,14 +228,7 @@ h1 {
                 string rootPath = GetTemporaryDirectory();
                 generatedFolders.Add(rootPath);
                 GenerateHtml(rootPath);
-                //System.Diagnostics.Process.Start(Path.Combine(rootPath, "index.html"));
             }
-
-            //<FlowDocument>
-            //    <Paragraph>
-            //        <Hyperlink NavigateUri="http://www.microsoft.com" RequestNavigate="Hyperlink_RequestNavigate">Microsoft</Hyperlink>
-            //    </Paragraph>
-            //</FlowDocument>
 
             AddPara("Next steps:");
 
@@ -280,19 +237,16 @@ h1 {
             list.MarkerStyle = TextMarkerStyle.Decimal;
             list.ListItems.Add(new ListItem(CreatePara("Open HelpNDoc, see their website: ", CreateLink("http://www.helpndoc.com", "HelpNDoc"))));
             list.ListItems.Add(new ListItem(CreatePara("Choose Import/Folder.")));
-            ListItem listItem = new ListItem(CreatePara("Copy/paste one of the folders below."));
-            list.ListItems.Add(listItem);
-            List innerList = new List();
-            innerList.MarkerStyle = TextMarkerStyle.LowerLatin;
-            listItem.Blocks.Add(innerList);
-            foreach (string folder in generatedFolders)
-            {
-                innerList.ListItems.Add(new ListItem(CreatePara(CreateLink(Path.Combine(folder, "index.html"), folder))));
-            }
+            list.ListItems.Add(new ListItem(CreatePara("Copy/paste one of the folders below.")));
             list.ListItems.Add(new ListItem(CreatePara("Press refresh.")));
             list.ListItems.Add(new ListItem(CreatePara("Deselect the files you don't want, such as index.")));
             list.ListItems.Add(new ListItem(CreatePara("Press import.")));
             list.ListItems.Add(new ListItem(CreatePara("See the ", CreateLink("http://www.helpndoc.com", "HelpNDoc"), " manual on how to generate Html, Word, Pdf, CHM, ePub, etc.")));
+            AddPara("The generated Html files:");
+            foreach (string folder in generatedFolders)
+            {
+                AddLink(Path.Combine(folder, "index.html"), folder);
+            }
         }
         private BlockCollection blocks;
 
@@ -403,11 +357,17 @@ h1 {
             Summary = summary;
         }
     }
+    /// <summary>
+    /// DocParam represents a method parameter
+    /// </summary>
     public class DocParam
     {
         public string Name { get; set; }
         public string Value { get; set; }
     }
+    /// <summary>
+    /// DocContent represents a documentation content, such as text or list.
+    /// </summary>
     public class DocContent
     {
         internal static List<DocContent> ToDocContents(IEnumerable<XNode> nodes)
@@ -454,6 +414,48 @@ h1 {
                 }
             }
             return result;
+        }
+        public static void AddToXml(XElement parent, List<DocContent> summary)
+        {
+            foreach (DocContent docContent in summary)
+            {
+                if (docContent is DocText)
+                    parent.Add(((DocText)docContent).Text);
+                else if (docContent is DocList)
+                {
+                    DocList docList = (DocList)docContent;
+                    if (docList.ListType == ListTypeEnum.Table)
+                    {
+                        // ToDo
+                        XElement table = new XElement("table");
+                        parent.Add(table);
+                        XElement tr = new XElement("tr");
+                        table.Add(tr);
+                        tr.Add(new XElement("th", docList.Header.Term));
+                        tr.Add(new XElement("th", docList.Header.Description));
+                        foreach (DocListItem item in docList.Items)
+                        {
+                            tr = new XElement("tr");
+                            table.Add(tr);
+                            table.Add(new XElement("td", item.Term));
+                            table.Add(new XElement("td", item.Description));
+                        }
+                    }
+                    else
+                    {
+                        XElement list;
+                        if (docList.ListType == ListTypeEnum.Number)
+                            list = new XElement("ol");
+                        else
+                            list = new XElement("ul");
+                        parent.Add(list);
+                        foreach (DocListItem item in docList.Items)
+                        {
+                            list.Add(new XElement("li", item.Description));
+                        }
+                    }
+                }
+            }
         }
         public static string GetNodeValue(XElement xml, XName tag)
         {
